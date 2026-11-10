@@ -1,4 +1,6 @@
-
+from pathlib import Path
+import pandas as pd
+import streamlit as st
 import pandas as pd
 import streamlit as st
 import plotly.express as px
@@ -19,11 +21,24 @@ st.set_page_config(
 
 @st.cache_data
 def load_data():
-    data = pd.read_csv("merged_dataset.csv")
+    # Locate the main project folder
+    BASE_DIR = Path(__file__).resolve().parent.parent
+
+    # Locate the CSV file
+    DATA_PATH = BASE_DIR / "merged_dataset.csv"
+
+    # Check whether the file exists
+    if not DATA_PATH.exists():
+        st.error(f"Dataset not found: {DATA_PATH}")
+        st.stop()
+
+    # Load the dataset
+    data = pd.read_csv(DATA_PATH)
+
     return data
 
-df = load_data()
 
+df = load_data()
 # ---------------------------------
 # PAGE TITLE
 # ---------------------------------
