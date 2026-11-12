@@ -1,3 +1,67 @@
+
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+from pathlib import Path
+
+# =====================================================
+# 1. PAGE CONFIGURATION
+# =====================================================
+
+st.set_page_config(
+    page_title="Malaysia District Explorer",
+    page_icon="📊",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+# =====================================================
+# 2. CUSTOM DESIGN
+# =====================================================
+
+st.markdown("""
+<style>
+    .main-title {
+        font-size: 32px;
+        font-weight: 750;
+        color: #2563EB;
+        margin-bottom: 4px;
+    }
+    .subtitle {
+        color: #64748B;
+        font-size: 15px;
+        margin-bottom: 22px;
+    }
+    div[data-testid="stMetric"] {
+        background-color: rgba(128,128,128,0.08);
+        padding: 16px;
+        border-radius: 12px;
+        border: 1px solid rgba(128,128,128,0.18);
+    }
+    .section-note {
+        color: #64748B;
+        font-size: 13px;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown(
+    '<div class="main-title">Malaysia District Data Explorer</div>',
+    unsafe_allow_html=True
+)
+st.markdown(
+    '<div class="subtitle">Explore household income, population and school distribution across Malaysian districts.</div>',
+    unsafe_allow_html=True
+)
+
+# =====================================================
+# 3. LOAD DATA
+# =====================================================
+
+@st.cache_data
+def load_data():
+    file_path = (
+        Path(__file__).resolve().parent.parent
         / "merged_dataset.csv"
     )
 
@@ -27,6 +91,9 @@ try:
 except Exception as e:
     st.error(f"Unable to load dataset: {e}")
     st.stop()
+
+# =====================================================
+# 4. SIDEBAR FILTERS
 # =====================================================
 
 st.sidebar.title("🔎 Explore the Data")
@@ -98,7 +165,7 @@ st.sidebar.caption(
 if data.empty:
     st.warning("No data matches your selected filters.")
     st.stop()
-        
+
 # =====================================================
 # 5. HELPER FUNCTIONS
 # =====================================================
@@ -186,6 +253,103 @@ def show_download(data, key, filename):
         mime="text/csv",
         key=key
     )
+
+
+# =====================================================
+# 6. OVERVIEW METRICS
+# =====================================================
+
+st.subheader("📊 Dataset Overview")
+
+m1, m2, m3 = st.columns(3)
+
+m1.metric(
+    "Districts Covered",
+    data["district"].nunique()
+)
+
+m2.metric(
+    "Average District Median Income",
+    f"RM {data['income_median'].mean():,.0f}"
+)
+
+m3.metric(
+    "Total Population",
+    f"{data['population'].sum():,.1f} thousand"
+)
+
+st.caption(
+    f"Showing {len(data):,} records for {int(selected_year)} "
+    f"across {data['state'].nunique()} selected states."
+)
+
+st.divider()
+
+# =====================================================
+# 7. OBJECTIVE TABS
+# =====================================================
+
+income_tab, population_tab, school_tab = st.tabs([
+    "💰 Income Analysis",
+    "👥 Population Analysis",
+    "🏫 School Distribution"
+])
+
+# =====================================================
+# TAB 1: INCOME
+# =====================================================
+
+with income_tab:
+
+    st.header("Objective 1: Household Income")
+
+    st.write(
+        "To analyze the distribution of median household income "
+        "across Malaysian districts and identify differences between districts."
+    )
+
+    summary_box(
+        data, "income_median",
+        "Median Household Income",
+        prefix="RM ", decimals=0
+    )
+
+    st.divider()
+
+    income = data.dropna(
+        subset=["district", "state", "income_median"]
+    )
+
+    st.subheader("1. Median Household Income by District")
+
+    income_rank = ranking_data(income, "income_median")
+
+    bar_orientation = st.radio(
+        "Choose chart orientation",
+        ["Horizontal", "Vertical"],
+        horizontal=True,
+        key="income_orientation"
+    )
+
+    if bar_orientation == "Horizontal":
+        fig = px.bar(
+            income_rank.sort_values("income_median"),
+            x="income_median",
+            y="district",
+            color="state",
+            orientation="h",
+            hover_data=["state"],
+            labels={
+                "income_median": "Median Income (RM)",
+                "district": "District"
+            }
+        )
+    else:
+        fig = px.bar(
+            income_rank,
+            x="district",
+            y="income_median",
+            color="state",
             hover_data=["state"],
             labels={
                 "income_median": "Median Income (RM)",
@@ -270,6 +434,146 @@ def show_download(data, key, filename):
         key="download_income_csv",
         filename=f"income_data_{int(selected_year)}.csv"
     )
+
+
+# =====================================================
+# TAB 2: POPULATION
+# =====================================================
+
+with population_tab:
+
+    st.header("Objective 2: Population Distribution")
+
+    st.write(
+        "To examine population distribution across Malaysian districts "
+        "and identify districts with the largest and smallest populations."
+    )
+
+    summary_box(
+        data, "population",
+        "Population",
+        suffix=" thousand", decimals=1
+    )
+
+    st.divider()
+
+    population = data.dropna(
+        subset=["district", "state", "population"]
+    )
+
+    st.subheader("1. Population by District")
+
+    population_rank = ranking_data(population, "population")
+
+    fig = px.bar(
+        population_rank.sort_values("population"),
+        x="population",
+        y="district",
+        color="state",
+        orientation="h",
+        hover_data=["state"],
+        labels={
+            "population": "Population (Thousands)",
+            "district": "District"
+        }
+    )
+
+    st.plotly_chart(chart_layout(fig, 600), use_container_width=True)
+
+    st.caption(
+        "Districts are ranked by population. Hover over the bars "
+        "to see the population value and state."
+    )
+
+    st.divider()
+
+    left, right = st.columns(2)
+
+    with left:
+        st.subheader("2. Population Distribution")
+
+        bins = st.slider(
+            "Number of population intervals",
+            5, 40, 20,
+            key="population_bins"
+        )
+
+        fig = px.histogram(
+            population,
+            x="population",
+            nbins=bins,
+            color_discrete_sequence=["#16A085"],
+            labels={"population": "Population (Thousands)"}
+        )
+
+        fig.update_layout(
+            xaxis_title="Population (Thousands)",
+            yaxis_title="Number of Districts"
+        )
+
+        st.plotly_chart(chart_layout(fig, 420), use_container_width=True)
+
+    with right:
+        st.subheader("3. Population Treemap")
+
+        fig = px.treemap(
+            population,
+            path=["state", "district"],
+            values="population",
+            color="population",
+            color_continuous_scale="Blues",
+            hover_data=["population"],
+            labels={"population": "Population (Thousands)"}
+        )
+
+        st.plotly_chart(chart_layout(fig, 420), use_container_width=True)
+
+    with st.expander("📖 Read population interpretation"):
+        st.write(
+            "The bar chart identifies the most and least populated "
+            "districts. The histogram reveals the distribution of "
+            "population sizes, while the treemap compares the relative "
+            "population sizes of districts grouped by state."
+        )
+
+    with st.expander("View population data"):
+        st.dataframe(
+            population[
+                ["state", "district", "population"]
+            ],
+            use_container_width=True,
+            hide_index=True
+        )
+
+    show_download(
+        population,
+        key="download_population_csv",
+        filename=f"population_data_{int(selected_year)}.csv"
+    )
+
+
+# =====================================================
+# TAB 3: SCHOOLS
+# =====================================================
+
+with school_tab:
+
+    st.header("Objective 3: School Distribution")
+
+    st.write(
+        "To visualize the distribution of schools across Malaysian "
+        "districts and identify differences in school infrastructure."
+    )
+
+    summary_box(
+        data, "schools",
+        "Number of Schools",
+        decimals=0
+    )
+
+    st.divider()
+
+    schools = data.dropna(
         subset=["district", "state", "schools"]
     )
 
@@ -375,6 +679,7 @@ def show_download(data, key, filename):
         key="download_schools_csv",
         filename=f"schools_data_{int(selected_year)}.csv"
     )
+
 
 # =====================================================
 # 8. FOOTER
