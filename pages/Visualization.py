@@ -1,8 +1,6 @@
 from pathlib import Path
 import pandas as pd
 import streamlit as st
-import pandas as pd
-import streamlit as st
 import plotly.express as px
 
 # ---------------------------------
@@ -132,35 +130,28 @@ else:
         ascending=False
     )
 
-   fig_income = px.bar(
-    income_data,
-    x="district",
-    y="income_median",
-    color_discrete_sequence=["#E75480"],
-    title="Median Household Income by District",
-    labels={
-        "district": "District",
-        "income_median": "Median Household Income (RM)"
-    },
-    hover_data=["state", "year"]
-)
-
-fig_income.update_layout(
-    xaxis_tickangle=-45,
-    height=550,
-    plot_bgcolor="#FFFFFF",
-    paper_bgcolor="#FFFFFF",
-    font_color="#374151"
-)
+       fig_income = px.bar(
+        income_data,
+        x="district",
+        y="income_median",
+        color_discrete_sequence=["#E75480"],
+        title="Median Household Income by District",
+        labels={
+            "district": "District",
+            "income_median": "Median Household Income (RM)"
+        },
+        hover_data=["state", "year"]
     )
 
     fig_income.update_layout(
         xaxis_tickangle=-45,
-        height=550
+        height=550,
+        plot_bgcolor="#FFFFFF",
+        paper_bgcolor="#FFFFFF",
+        font_color="#374151"
     )
 
     st.plotly_chart(fig_income, use_container_width=True)
-
     highest_income = income_data.iloc[0]
     lowest_income = income_data.iloc[-1]
 
@@ -190,31 +181,25 @@ fig_income.update_layout(
         ascending=False
     )
 
-    fig_population = px.bar(
-    population_data,
-    x="district",
-    y="population",
-    color_discrete_sequence=["#8956B3"],
-    title="Population by District",
-    labels={
-        "district": "District",
-        "population": "Population (thousand people)"
-    },
-    hover_data=["state", "year"]
-)
-
-fig_population.update_layout(
-    xaxis_tickangle=-45,
-    height=550,
-    plot_bgcolor="#FFFFFF",
-    paper_bgcolor="#FFFFFF",
-    font_color="#374151"
-)
+        fig_population = px.bar(
+        population_data,
+        x="district",
+        y="population",
+        color_discrete_sequence=["#8956B3"],
+        title="Population by District",
+        labels={
+            "district": "District",
+            "population": "Population (thousand people)"
+        },
+        hover_data=["state", "year"]
     )
 
     fig_population.update_layout(
         xaxis_tickangle=-45,
-        height=550
+        height=550,
+        plot_bgcolor="#FFFFFF",
+        paper_bgcolor="#FFFFFF",
+        font_color="#374151"
     )
 
     st.plotly_chart(fig_population, use_container_width=True)
@@ -249,31 +234,25 @@ fig_population.update_layout(
         ascending=False
     )
 
-    fig_education = px.bar(
-    education_data,
-    x="district",
-    y="schools",
-    color_discrete_sequence=["#269B91"],
-    title="Public Education Institutions by District",
-    labels={
-        "district": "District",
-        "schools": "Number of Institutions"
-    },
-    hover_data=["state", "year"]
-)
-
-fig_education.update_layout(
-    xaxis_tickangle=-45,
-    height=550,
-    plot_bgcolor="#FFFFFF",
-    paper_bgcolor="#FFFFFF",
-    font_color="#374151"
-)
+        fig_education = px.bar(
+        education_data,
+        x="district",
+        y="schools",
+        color_discrete_sequence=["#269B91"],
+        title="Public Education Institutions by District",
+        labels={
+            "district": "District",
+            "schools": "Number of Institutions"
+        },
+        hover_data=["state", "year"]
     )
 
     fig_education.update_layout(
         xaxis_tickangle=-45,
-        height=550
+        height=550,
+        plot_bgcolor="#FFFFFF",
+        paper_bgcolor="#FFFFFF",
+        font_color="#374151"
     )
 
     st.plotly_chart(fig_education, use_container_width=True)
