@@ -301,7 +301,7 @@ income_tab, population_tab, school_tab = st.tabs([
 
 with income_tab:
 
-    st.header("Objective 1: Household Income")
+    st.header("Household Income")
 
     st.write(
         "To analyze the distribution of median household income "
@@ -442,7 +442,7 @@ with income_tab:
 
 with population_tab:
 
-    st.header("Objective 2: Population Distribution")
+    st.header("Population Distribution")
 
     st.write(
         "To examine population distribution across Malaysian districts "
@@ -558,7 +558,7 @@ with population_tab:
 
 with school_tab:
 
-    st.header("Objective 3: School Distribution")
+    st.header("School Distribution")
 
     st.write(
         "To visualize the distribution of schools across Malaysian "
