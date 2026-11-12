@@ -132,17 +132,26 @@ else:
         ascending=False
     )
 
-    fig_income = px.bar(
-        income_data,
-        x="district",
-        y="income_median",
-        color="income_median",
-        title="Median Household Income by District",
-        labels={
-            "district": "District",
-            "income_median": "Median Household Income (RM)"
-        },
-        hover_data=["state", "year"]
+   fig_income = px.bar(
+    income_data,
+    x="district",
+    y="income_median",
+    color_discrete_sequence=["#E75480"],
+    title="Median Household Income by District",
+    labels={
+        "district": "District",
+        "income_median": "Median Household Income (RM)"
+    },
+    hover_data=["state", "year"]
+)
+
+fig_income.update_layout(
+    xaxis_tickangle=-45,
+    height=550,
+    plot_bgcolor="#FFFFFF",
+    paper_bgcolor="#FFFFFF",
+    font_color="#374151"
+)
     )
 
     fig_income.update_layout(
@@ -182,16 +191,25 @@ else:
     )
 
     fig_population = px.bar(
-        population_data,
-        x="district",
-        y="population",
-        color="population",
-        title="Population by District",
-        labels={
-            "district": "District",
-            "population": "Population (thousand people)"
-        },
-        hover_data=["state", "year"]
+    population_data,
+    x="district",
+    y="population",
+    color_discrete_sequence=["#8956B3"],
+    title="Population by District",
+    labels={
+        "district": "District",
+        "population": "Population (thousand people)"
+    },
+    hover_data=["state", "year"]
+)
+
+fig_population.update_layout(
+    xaxis_tickangle=-45,
+    height=550,
+    plot_bgcolor="#FFFFFF",
+    paper_bgcolor="#FFFFFF",
+    font_color="#374151"
+)
     )
 
     fig_population.update_layout(
@@ -232,16 +250,25 @@ else:
     )
 
     fig_education = px.bar(
-        education_data,
-        x="district",
-        y="schools",
-        color="schools",
-        title="Public Education Institutions by District",
-        labels={
-            "district": "District",
-            "schools": "Number of Institutions"
-        },
-        hover_data=["state", "year"]
+    education_data,
+    x="district",
+    y="schools",
+    color_discrete_sequence=["#269B91"],
+    title="Public Education Institutions by District",
+    labels={
+        "district": "District",
+        "schools": "Number of Institutions"
+    },
+    hover_data=["state", "year"]
+)
+
+fig_education.update_layout(
+    xaxis_tickangle=-45,
+    height=550,
+    plot_bgcolor="#FFFFFF",
+    paper_bgcolor="#FFFFFF",
+    font_color="#374151"
+)
     )
 
     fig_education.update_layout(
