@@ -132,7 +132,8 @@ else:
         income_data,
         x="district",
         y="income_median",
-        color_discrete_sequence=["#E75480"],
+        color="state",
+        color_discrete_sequence=px.colors.qualitative.Bold,
         title="Median Household Income by District",
         labels={
             "district": "District",
@@ -188,7 +189,8 @@ else:
         population_data,
         x="district",
         y="population",
-        color_discrete_sequence=["#8956B3"],
+        color="state",
+        color_discrete_sequence=px.colors.qualitative.Bold,
         title="Population by District",
         labels={
             "district": "District",
@@ -245,7 +247,8 @@ else:
         education_data,
         x="district",
         y="schools",
-        color_discrete_sequence=["#269B91"],
+        color="state",
+        color_discrete_sequence=px.colors.qualitative.Bold,
         title="Public Education Institutions by District",
         labels={
             "district": "District",
