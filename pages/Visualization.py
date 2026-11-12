@@ -275,7 +275,7 @@ m2.metric(
 
 m3.metric(
     "Total Population",
-    f"{data['population'].sum():,.1f} thousand"
+    f"{data['population'].sum():,.1f} K"
 )
 
 st.caption(
@@ -452,7 +452,7 @@ with population_tab:
     summary_box(
         data, "population",
         "Population",
-        suffix=" thousand", decimals=1
+        suffix=" K", decimals=1
     )
 
     st.divider()
@@ -473,7 +473,7 @@ with population_tab:
         orientation="h",
         hover_data=["state"],
         labels={
-            "population": "Population (Thousands)",
+            "population": "Population (K)",
             "district": "District"
         }
     )
@@ -503,11 +503,11 @@ with population_tab:
             x="population",
             nbins=bins,
             color_discrete_sequence=["#16A085"],
-            labels={"population": "Population (Thousands)"}
+            labels={"population": "Population (K)"}
         )
 
         fig.update_layout(
-            xaxis_title="Population (Thousands)",
+            xaxis_title="Population (K)",
             yaxis_title="Number of Districts"
         )
 
@@ -523,7 +523,7 @@ with population_tab:
             color="population",
             color_continuous_scale="Blues",
             hover_data=["population"],
-            labels={"population": "Population (Thousands)"}
+            labels={"population": "Population (K)"}
         )
 
         st.plotly_chart(chart_layout(fig, 420), use_container_width=True)
@@ -644,7 +644,7 @@ with school_tab:
             hover_name="district",
             hover_data=["population", "schools"],
             labels={
-                "population": "Population (Thousands)",
+                "population": "Population (K)",
                 "schools": "Number of Schools"
             }
         )
