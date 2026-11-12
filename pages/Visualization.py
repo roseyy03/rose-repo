@@ -1,3 +1,4 @@
+
 from pathlib import Path
 import pandas as pd
 import streamlit as st
@@ -19,29 +20,25 @@ st.set_page_config(
 
 @st.cache_data
 def load_data():
-    # Locate the main project folder
-    BASE_DIR = Path(__file__).resolve().parent.parent
+    base_dir = Path(__file__).resolve().parent.parent
+    data_path = base_dir / "merged_dataset.csv"
 
-    # Locate the CSV file
-    DATA_PATH = BASE_DIR / "merged_dataset.csv"
-
-    # Check whether the file exists
-    if not DATA_PATH.exists():
-        st.error(f"Dataset not found: {DATA_PATH}")
+    if not data_path.exists():
+        st.error(f"Dataset not found: {data_path}")
         st.stop()
 
-    # Load the dataset
-    data = pd.read_csv(DATA_PATH)
-
+    data = pd.read_csv(data_path)
     return data
 
 
 df = load_data()
+
 # ---------------------------------
 # PAGE TITLE
 # ---------------------------------
 
 st.title("District Data Visualization")
+
 st.write(
     "An interactive visualization of household income, "
     "population and public education institutions "
@@ -73,7 +70,6 @@ selected_state = st.sidebar.selectbox(
     available_states
 )
 
-# Filter data
 filtered_df = df[df["year"] == selected_year].copy()
 
 if selected_state != "All States":
@@ -88,9 +84,11 @@ if selected_state != "All States":
 st.subheader(f"Overview for {selected_year}")
 
 if filtered_df.empty:
+
     st.warning("No data available for the selected filters.")
 
 else:
+
     col1, col2, col3 = st.columns(3)
 
     with col1:
@@ -130,7 +128,7 @@ else:
         ascending=False
     )
 
-       fig_income = px.bar(
+    fig_income = px.bar(
         income_data,
         x="district",
         y="income_median",
@@ -151,16 +149,21 @@ else:
         font_color="#374151"
     )
 
-    st.plotly_chart(fig_income, use_container_width=True)
-    highest_income = income_data.iloc[0]
-    lowest_income = income_data.iloc[-1]
-
-    st.info(
-        f"**Summary:** {highest_income['district']} has the highest "
-        f"median household income at RM {highest_income['income_median']:,.0f}, "
-        f"while {lowest_income['district']} has the lowest at "
-        f"RM {lowest_income['income_median']:,.0f}."
+    st.plotly_chart(
+        fig_income,
+        use_container_width=True
     )
+
+    if not income_data.empty:
+        highest_income = income_data.iloc[0]
+        lowest_income = income_data.iloc[-1]
+
+        st.info(
+            f"**Summary:** {highest_income['district']} has the highest "
+            f"median household income at RM {highest_income['income_median']:,.0f}, "
+            f"while {lowest_income['district']} has the lowest at "
+            f"RM {lowest_income['income_median']:,.0f}."
+        )
 
     st.divider()
 
@@ -181,7 +184,7 @@ else:
         ascending=False
     )
 
-        fig_population = px.bar(
+    fig_population = px.bar(
         population_data,
         x="district",
         y="population",
@@ -202,18 +205,22 @@ else:
         font_color="#374151"
     )
 
-    st.plotly_chart(fig_population, use_container_width=True)
-
-    largest_population = population_data.iloc[0]
-    smallest_population = population_data.iloc[-1]
-
-    st.info(
-        f"**Summary:** {largest_population['district']} has the "
-        f"largest population at {largest_population['population']:,.1f} "
-        f"thousand people, while {smallest_population['district']} "
-        f"has the smallest at "
-        f"{smallest_population['population']:,.1f} thousand people."
+    st.plotly_chart(
+        fig_population,
+        use_container_width=True
     )
+
+    if not population_data.empty:
+        largest_population = population_data.iloc[0]
+        smallest_population = population_data.iloc[-1]
+
+        st.info(
+            f"**Summary:** {largest_population['district']} has the "
+            f"largest population at {largest_population['population']:,.1f} "
+            f"thousand people, while {smallest_population['district']} "
+            f"has the smallest at "
+            f"{smallest_population['population']:,.1f} thousand people."
+        )
 
     st.divider()
 
@@ -234,7 +241,7 @@ else:
         ascending=False
     )
 
-        fig_education = px.bar(
+    fig_education = px.bar(
         education_data,
         x="district",
         y="schools",
@@ -255,18 +262,22 @@ else:
         font_color="#374151"
     )
 
-    st.plotly_chart(fig_education, use_container_width=True)
-
-    highest_schools = education_data.iloc[0]
-    lowest_schools = education_data.iloc[-1]
-
-    st.info(
-        f"**Summary:** {highest_schools['district']} has the "
-        f"highest number of public primary and secondary "
-        f"institutions ({highest_schools['schools']:,}), while "
-        f"{lowest_schools['district']} has the lowest "
-        f"({lowest_schools['schools']:,})."
+    st.plotly_chart(
+        fig_education,
+        use_container_width=True
     )
+
+    if not education_data.empty:
+        highest_schools = education_data.iloc[0]
+        lowest_schools = education_data.iloc[-1]
+
+        st.info(
+            f"**Summary:** {highest_schools['district']} has the "
+            f"highest number of public primary and secondary "
+            f"institutions ({highest_schools['schools']:,}), while "
+            f"{lowest_schools['district']} has the lowest "
+            f"({lowest_schools['schools']:,})."
+        )
 
     # ---------------------------------
     # DATA TABLE
